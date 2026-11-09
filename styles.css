@@ -1,0 +1,112 @@
+/* Lingua — дополнительные стили (анимации и то, что неудобно делать классами Tailwind) */
+
+:root { color-scheme: light; }
+.dark { color-scheme: dark; }
+
+body { -webkit-tap-highlight-color: transparent; }
+
+.font-display { font-variation-settings: "SOFT" 50; }
+
+/* ---------- Плавная смена вкладок ---------- */
+.view-enter { animation: viewIn .38s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Переворот карточки ---------- */
+.flip-card { perspective: 1400px; cursor: pointer; outline: none; }
+.flip-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .6s cubic-bezier(.3,1.25,.45,1);
+}
+.flip-inner.is-flipped { transform: rotateY(180deg); }
+.flip-face {
+  position: absolute; inset: 0;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+}
+.flip-face.back { transform: rotateY(180deg); }
+.flip-card:focus-visible .flip-face { box-shadow: 0 0 0 4px rgb(20 184 166 / .35); }
+
+/* Появление новой карточки */
+.card-in { animation: cardIn .35s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(14px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Обратная связь ---------- */
+.shake { animation: shake .4s ease; }
+@keyframes shake {
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+.pop { animation: pop .3s ease; }
+@keyframes pop {
+  50% { transform: scale(1.05); }
+}
+
+/* ---------- Тосты ---------- */
+.toast { animation: toastIn .3s cubic-bezier(.2,.7,.2,1) both; }
+.toast.out { animation: toastOut .25s ease both; }
+@keyframes toastIn  { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- Мелочи ---------- */
+.bar { transition: height .5s cubic-bezier(.2,.7,.2,1); }
+.progress-fill { transition: width .45s cubic-bezier(.2,.7,.2,1); }
+.ring-progress { transition: stroke-dashoffset .6s cubic-bezier(.2,.7,.2,1); }
+
+kbd {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .7rem; padding: 1px 6px; border-radius: 6px;
+  border: 1px solid currentColor; opacity: .55;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* =====================================================================
+   Мобильное приложение
+   ===================================================================== */
+html, body { overscroll-behavior-y: none; }
+button, a, summary, [role="button"] { touch-action: manipulation; }
+.flip-card { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+
+/* Подписи при свайпе карточки */
+.swipe-tag {
+  position: absolute; top: 18px; z-index: 5; pointer-events: none;
+  padding: 6px 14px; border-radius: 12px; border: 3px solid currentColor;
+  font-weight: 800; font-size: 18px; letter-spacing: .02em;
+  opacity: 0; transition: opacity .15s ease, transform .15s ease;
+  background: rgb(255 255 255 / .9);
+}
+.dark .swipe-tag { background: rgb(14 16 19 / .9); }
+.swipe-tag.know   { left: 18px;  color: #059669; transform: rotate(-12deg) scale(.9); }
+.swipe-tag.forgot { right: 18px; color: #e11d48; transform: rotate(12deg) scale(.9); }
+.flip-card[data-swipe="know"]   .swipe-tag.know,
+.flip-card[data-swipe="forgot"] .swipe-tag.forgot { opacity: 1; transform: rotate(var(--r, 0)) scale(1); }
+.flip-card[data-swipe="know"]   .swipe-tag.know   { --r: -12deg; }
+.flip-card[data-swipe="forgot"] .swipe-tag.forgot { --r: 12deg; }
+
+/* Нижняя шторка-диалог */
+.sheet-backdrop { animation: fadeIn .2s ease both; }
+.sheet-backdrop .sheet { animation: sheetUp .3s cubic-bezier(.2,.8,.2,1) both; }
+.sheet-backdrop.out { animation: fadeOut .2s ease both; }
+@keyframes fadeIn  { from { opacity: 0; } }
+@keyframes fadeOut { to { opacity: 0; } }
+@keyframes sheetUp { from { transform: translateY(40px); opacity: 0; } }
+
+/* Раскрывающиеся блоки в «Словаре» */
+summary::-webkit-details-marker { display: none; }
+details[open] > summary .chev { transform: rotate(180deg); }
+
+/* Установленное приложение: отступы под «чёлку» и системные панели */
+@media (display-mode: standalone) {
+  header { padding-top: env(safe-area-inset-top); }
+}
